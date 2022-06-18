@@ -6,11 +6,12 @@
 # docker run --rm -it powareverb/stationeers-dedserver:latest /bin/bash
 # docker run --rm powareverb/stationeers-dedserver:latest
 # Permanent
-# docker run --rm -it --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated powareverb/stationeers-dedserver /bin/bash
-# docker run -d --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated powareverb/stationeers-dedserver
+# docker run --rm -it --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated-host powareverb/stationeers-dedserver /bin/bash
+# docker run -d --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated-host powareverb/stationeers-dedserver
 
 # Jump in 
 # docker exec -it stationeers-dedicated bash
+# docker exec -it stationeers-dedicated-host bash
 
 # https://stationeers-wiki.com/Dedicated_Server_Guide
 

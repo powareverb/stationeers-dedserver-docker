@@ -10,7 +10,14 @@ Check out the guide here, and note the minimum specifications for running this s
 
 In particular - the server currently requires 16GM RAM
 
+## Status
+
 NOTE: This is a work in progress, currently running but haven't confirmed getting networking / clients connected
+As of:
+"LastUpdated"           "1655527706"
+"buildid"               "8961321"
+Update 0.2.3346.16562
+this seems to be running correctly, however having issues with timeouts connecting to the client.
 
 ## What is Stationeers?
 A brutal exploration and survival game in space, set on a procedurally-generated planet or moon of your choice.  Don't forget your duct tape.

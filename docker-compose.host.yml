@@ -14,16 +14,9 @@ services:
   stationeers-dedicated:
     container_name: stationeers-dedicated
     image: powareverb/stationeers-dedserver:latest
-    # cap_add:
-    #   - NET_ADMIN
-    ports:
-      # Steam server ports
-      - "27015/tcp"
-      - "27015/udp"
-      - "27020/udp"
-      # stationeers server ports
-      - "27500:27500/udp"
-      - "27501:27501/udp"
+    cap_add:
+      - NET_ADMIN
+    network_mode: "host"
     environment:
       TZ: 'Pacific/Auckland'
       SERVERNAME: "powareverb-stationeers-dedserver-test"
