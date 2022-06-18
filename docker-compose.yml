@@ -1,0 +1,28 @@
+version: "3.4"
+
+# Local compose:
+# sudo docker-compose up -d
+# docker exec -it stationeers-dedicated bash
+
+services:
+  stationeers-dedicated:
+    container_name: stationeers-dedicated
+    image: powareverb/stationeers-dedserver:latest
+    ports:
+      # Steam server ports
+      - "27015/tcp"
+      - "27015/udp"
+      - "27020/udp"
+      # stationeers server ports
+      - "27500:27500/tcp"
+      - "27500:27500/udp"
+      - "27501:27501/tcp"
+      - "27501:27501/udp"
+    environment:
+      TZ: 'Pacific/Auckland'
+    volumes:
+      - 'stationeers-data:/home/steam/stationeers-server-dedicated'
+
+volumes:
+  stationeers-data:
+
