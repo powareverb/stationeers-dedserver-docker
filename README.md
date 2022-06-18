@@ -10,6 +10,8 @@ Check out the guide here, and note the minimum specifications for running this s
 
 In particular - the server currently requires 16GM RAM
 
+NOTE: This is a work in progress, currently running but haven't confirmed getting networking / clients connected
+
 ## What is Stationeers?
 A brutal exploration and survival game in space, set on a procedurally-generated planet or moon of your choice.  Don't forget your duct tape.
 
