@@ -14,9 +14,7 @@ services:
       - "27015/udp"
       - "27020/udp"
       # stationeers server ports
-      - "27500:27500/tcp"
       - "27500:27500/udp"
-      - "27501:27501/tcp"
       - "27501:27501/udp"
     environment:
       TZ: 'Pacific/Auckland'
