@@ -1,0 +1,8 @@
+#!/bin/bash
+echo "post_push - $DOCKERFILE_PATH"
+
+# Add the source commit as a tag
+# DOCKERFILE_PATH
+#  docker tag $IMAGE_NAME $DOCKER_REPO:$SOURCE_COMMIT
+#  docker push $DOCKER_REPO:$SOURCE_COMMIT
+
