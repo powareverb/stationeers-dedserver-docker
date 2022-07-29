@@ -29,16 +29,17 @@ Hosting a simple game server
 Running on the host interface (recommended):
 
 ```sh
+# RECOMMENDED: Using docker-compose
+docker-compose up -d
+
+# NOTE: Neither net-host option will work in Windows, due to networking incompatibilities.  Use the docker-compose version.
+# RECOMMENDED: Using a standard named mount for data persistence on container recreation:
+docker run -d --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated powareverb/stationeers-dedserver
+
 # Running using a bind mount for data persistence on container recreation:
 mkdir -p $(pwd)/stationeers-data
 chmod 777 $(pwd)/stationeers-data # Makes sure the directory is writeable by the unprivileged container user
 docker run -d --net=host -v $(pwd)/stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated powareverb/stationeers-dedserver
-
-# RECOMMENDED: Using a standard named mount for data persistence on container recreation:
-docker run -d --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated powareverb/stationeers-dedserver
-
-# RECOMMENDED: Using docker-compose
-docker-compose up -d
 
 ```
 It's also recommended to use "--cpuset-cpus=" to limit the game server to a specific core & thread.
@@ -49,23 +50,40 @@ The container will automatically update the game on startup, so if there is a ga
 Feel free to overwrite these environment variables, using -e (--env):
 
 ```sh
-# TODO: @powareverb Update these to ensure they work
-SERVER_PORT=27500 (Game Port (tcp & udp); Steam Query Port (udp) will be SERVER_PORT + 1)
-SERVER_PUBLIC=1
-SERVER_WORLD_NAME="BraveNewWorld"
-SERVER_PW="changeme"
-SERVER_NAME="New \"${STEAMAPP}\" Server"
-SERVER_LOG_PATH="logs_output/outputlog_server.txt"
-SERVER_SAVE_DIR="Worlds"
-SCREEN_QUALITY="Fastest"
-SCREEN_WIDTH=640
-SCREEN_HEIGHT=480
-STEAMCMD_UPDATE_ARGS="" (Gets appended here: +app_update [appid] [STEAMCMD_UPDATE_ARGS]; Example: "validate")
-ADDITIONAL_ARGS="" (Pass additional arguments to the server. Make sure to escape correctly!)
-If you want to learn more about configuring a Valheim server check this documentation.
+# These are the current defaults in the compose, but you can (and should!) override them
+
+# Timezone - not sure this is needed
+TZ: 'Pacific/Auckland'
+
+# Server name which will be announced to the master server
+SERVERNAME: "powareverb-stationeers-dedserver-test"
+
+# Password to stop all those undesirable stationeers from joining
+SERVERPASSWORD: "supersafepassword"
+
+# Start planetoid to use
+PLANETOID: "mars"
+
+# Name of the save game to load - will be created if it doesn't exist
+SAVENAME: "mars101"
+
+# Enable tmux for the console, highly recommended
+TMUXDIRECT: "true"
 ```
 
 ## Image Variants
-Only one current variant.
 
-stationeers-dedserver:latest
+### Auto updating variant
+
+This is an image which will auto update on startup, and may take a while to download the necessary images.  
+Once files are downloaded, the startup time is quite quick.
+
+- stationeers-dedserver:latest
+
+### Pre-baked auto updating variant
+
+This is an image which includes the latest version of the server as at time of build.  It will be a much larger image.
+The image will still auto update on startup, and may take a while to download the necessary images if there's a new server version.
+Once files are downloaded, the startup time is quite quick.
+
+- stationeers-dedserver:prebaked-latest

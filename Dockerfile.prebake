@@ -1,0 +1,58 @@
+###########################################################
+# Dockerfile that builds a stationeers Dedicated Gameserver
+###########################################################
+#
+# This variant runs steamcmd to grab the latest updates, and saves these for later use
+# (potentially so first boot of the server is quicker)
+# VERY LARGE WARNING - THIS WILL OVERWRITE YOUR DEDICATED SERVER DIRECTORY!
+# If the unfortunate occurs and the save directory gets packaged, this may be overwritten.  Be warned!
+
+# Building and Testing
+# docker build . -f Dockerfile.prebake -t powareverb/stationeers-dedserver:prebake-latest 
+# docker run --rm -it powareverb/stationeers-dedserver:prebake-latest /bin/bash
+# docker run --rm powareverb/stationeers-dedserver:prebake-latest
+# Permanent
+# docker run --rm -it --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated-host powareverb/stationeers-dedserver /bin/bash
+# docker run -d --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated-host powareverb/stationeers-dedserver
+
+# Jump in 
+# docker exec -it stationeers-dedicated bash
+# docker exec -it stationeers-dedicated-host bash
+
+# Validate versions - in image
+# echo "steam"; cat stationeers-server-prebake/steamapps/appmanifest_600760.acf | grep buildid
+# echo "game"; cat stationeers-server-prebake/rocketstation_DedicatedServer_Data/StreamingAssets/version.ini | grep UPDATE
+# Validate current game version externally
+# docker cp 4a2ea3eaa18d:/home/steam/stationeers-server-prebake/rocketstation_DedicatedServer_Data/StreamingAssets/version.ini ./version.ini
+# cat version.ini | grep UPDATE
+
+# https://stationeers-wiki.com/Dedicated_Server_Guide
+
+FROM powareverb/stationeers-dedserver:latest
+
+LABEL maintainer="gavin.jones.nz@gmail.com"
+
+ENV STEAMAPPID 600760
+ENV STEAMAPP stationeers-server
+ENV STEAMAPPDIR "${HOMEDIR}/${STEAMAPP}-dedicated"
+ENV STEAMCMDDIR "${HOMEDIR}/steamcmd"
+
+COPY ./entry.sh ${HOMEDIR}
+ENV PREBAKEDIR "${HOMEDIR}/${STEAMAPP}-prebake"
+RUN export PREBAKE=true && export STEAMAPPDIR=${PREBAKEDIR} && ./entry.sh  
+
+# Switch to user
+USER ${USER}
+VOLUME ${STEAMAPPDIR}
+WORKDIR ${HOMEDIR}
+
+CMD ["bash", "entry.sh"]
+
+# 27500
+# Expose ports
+EXPOSE 27015/tcp \
+	27015/udp \
+	27020/udp
+
+# Required for stationeers server
+EXPOSE 27500/udp 27501/udp 

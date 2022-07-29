@@ -24,11 +24,15 @@ services:
       # stationeers server ports
       - "27500:27500/udp"
       - "27501:27501/udp"
+
+    # See the README.md for these under "Environment Variables"
     environment:
       TZ: 'Pacific/Auckland'
       SERVERNAME: "powareverb-stationeers-dedserver-test"
       SERVERPASSWORD: "supersafepassword"
       PLANETOID: "mars"
+      SAVENAME: "mars101"
+      TMUXDIRECT: "true"
       # For testing
       # DONOOP: "true"
     volumes:

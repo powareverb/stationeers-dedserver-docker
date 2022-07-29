@@ -2,6 +2,7 @@
 # Dockerfile that builds a stationeers Dedicated Gameserver
 ###########################################################
 
+# Building and Testing
 # docker build . -t powareverb/stationeers-dedserver:latest
 # docker run --rm -it powareverb/stationeers-dedserver:latest /bin/bash
 # docker run --rm powareverb/stationeers-dedserver:latest
@@ -12,6 +13,13 @@
 # Jump in 
 # docker exec -it stationeers-dedicated bash
 # docker exec -it stationeers-dedicated-host bash
+
+# Validate versions - in image
+# echo "steam"; cat stationeers-server-dedicated/steamapps/appmanifest_600760.acf | grep buildid
+# echo "game"; cat stationeers-server-dedicated/rocketstation_DedicatedServer_Data/StreamingAssets/version.ini | grep UPDATE
+# Validate current game version externally
+# docker cp 4a2ea3eaa18d:/home/steam/stationeers-server-dedicated/rocketstation_DedicatedServer_Data/StreamingAssets/version.ini ./version.ini
+# cat version.ini | grep UPDATE
 
 # https://stationeers-wiki.com/Dedicated_Server_Guide
 
@@ -52,7 +60,7 @@ RUN set -x \
 
 # Switch to user
 USER ${USER}
-
+VOLUME ${STEAMAPPDIR}
 WORKDIR ${HOMEDIR}
 
 CMD ["bash", "entry.sh"]
