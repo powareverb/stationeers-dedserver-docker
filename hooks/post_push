@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 echo "post_push - $DOCKERFILE_PATH"
 
 # Add the source commit as a tag
