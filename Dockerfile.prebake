@@ -9,6 +9,7 @@
 
 # Building and Testing
 # docker build . -f Dockerfile.prebake -t powareverb/stationeers-dedserver:prebake-latest 
+# docker build . -f Dockerfile.prebake -t powareverb/stationeers-dedserver:prebake-latest --no-cache
 # docker run --rm -it powareverb/stationeers-dedserver:prebake-latest /bin/bash
 # docker run --rm powareverb/stationeers-dedserver:prebake-latest
 # Permanent
@@ -40,13 +41,16 @@ ENV STEAMCMDDIR "${HOMEDIR}/steamcmd"
 # The base image switches to user, we still need to make some changes
 USER root
 COPY ./entry.sh ${HOMEDIR}
+RUN chmod a+x ./entry.sh
 ENV PREBAKEDIR "${HOMEDIR}/${STEAMAPP}-prebake"
-RUN export PREBAKE=true && export STEAMAPPDIR=${PREBAKEDIR} && chmod a+x ./entry.sh && ./entry.sh  
 
 # Switch to user
 USER ${USER}
 VOLUME ${STEAMAPPDIR}
 WORKDIR ${HOMEDIR}
+
+# This will download the bits and bake them into the image
+RUN export PREBAKE=true && export STEAMAPPDIR=${PREBAKEDIR} && ./entry.sh  
 
 CMD ["bash", "entry.sh"]
 
