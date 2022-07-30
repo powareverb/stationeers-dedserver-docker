@@ -27,23 +27,24 @@ FROM cm2network/steamcmd:root
 
 LABEL maintainer="gavin.jones.nz@gmail.com"
 
+# Defaults that can be overridden
 ENV STEAMAPPID 600760
 ENV STEAMAPP stationeers-server
 ENV STEAMAPPDIR "${HOMEDIR}/${STEAMAPP}-dedicated"
 ENV STEAMCMDDIR "${HOMEDIR}/steamcmd"
+ENV VERSION_BRANCH "beta"
 
 COPY ./entry.sh ${HOMEDIR}
 RUN set -x \
 	# Install, update & upgrade packages
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends --no-install-suggests \
-		wget=1.21-1+deb11u1 \
-		ca-certificates=20210119 \
-		lib32z1=1:1.2.11.dfsg-2+deb11u1 \
+    # Latest packages due to security warnings
+	&& apt-get install -y \
+		wget \
+		ca-certificates \
+		lib32z1 \
 		tmux \
 	&& mkdir -p "${STEAMAPPDIR}" \
-	# Add entry script
-	# && wget --max-redirect=30 "${DLURL}/master/etc/entry.sh" -O "${HOMEDIR}/entry.sh" \
 	&& { \
 		echo '@ShutdownOnFailedCommand 1'; \
 		echo '@NoPromptForPassword 1'; \
@@ -56,7 +57,6 @@ RUN set -x \
 	&& chown -R "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${STEAMAPPDIR}" "${HOMEDIR}/${STEAMAPP}_update.txt" \
 	# Clean up
 	&& rm -rf /var/lib/apt/lists/* 
-
 
 # Switch to user
 USER ${USER}

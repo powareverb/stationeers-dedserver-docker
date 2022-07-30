@@ -16,15 +16,27 @@ if [ -f ${PREBAKEDIR}/rocketstation_DedicatedServer.x86_64 ]; then
 fi
 
 cd ${STEAMCMDDIR}
-bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
-				+login anonymous \
-				+app_update "${STEAMAPPID}" \
-				-beta beta \
-				validate \
-				+quit
+if [ "$VERSION_BRANCH"!="public" ]; 
+then
+    echo "Using beta branch: '$VERSION_BRANCH'"
+    bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
+                    +login anonymous \
+                    +app_update "${STEAMAPPID}" \
+                    -beta $VERSION_BRANCH \
+                    validate \
+                    +quit
+else
+    echo "Using public default branch: '$VERSION_BRANCH'"
+    bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
+                    +login anonymous \
+                    +app_update "${STEAMAPPID}" \
+                    validate \
+                    +quit
+fi
 
 # When building our prebake, we use this flag to install and quit
-if [ ${PREBAKE}="true" ]; then
+if [ ${PREBAKE}="true" ]; 
+then
 	echo "Prebake complete, exiting"
 	exit
 fi
@@ -37,7 +49,8 @@ echo "steam"; cat ${STEAMAPPDIR}/steamapps/appmanifest_${STEAMAPPID}.acf | grep 
 echo "game"; cat ${STEAMAPPDIR}/rocketstation_DedicatedServer_Data/StreamingAssets/version.ini | grep UPDATE
 
 # Testing using TMUX to allow interactive session
-if [ ${TMUXDIRECT}="true" ]; then
+if [ ${TMUXDIRECT}="true" ]; 
+then
 	echo "Running Dedicated Server via tmux"
 	tmux new -ds "${TMUXNAME}" "while [ -f ${STEAMAPPDIR}/keep-running ]; do ${STEAMAPPDIR}/rocketstation_DedicatedServer.x86_64 -new ${PLANETOID} -load '${SAVENAME}' ${PLANETOID} -settings ServerName '${SERVERNAME}' StartLocalHost true ServerVisible true ServerPassword '${SERVERPASSWORD}' ServerMaxPlayers 10 GamePort 27500 UpdatePort 27501 UPNPEnabled false AutoSave true SaveInterval 300; sleep 1; done"
 	tmux pipe-pane -t "${TMUXNAME}" 'cat >/tmp/rocketstation_DedicatedServer.log'
@@ -46,8 +59,10 @@ if [ ${TMUXDIRECT}="true" ]; then
 else
 
 	# This just runs the session normally
-	while [ -f ${STEAMAPPDIR}/keep-running ]; do 
-		if [ ${DONOOP}="true" ]; then
+	while [ -f ${STEAMAPPDIR}/keep-running ]; 
+    do 
+		if [ ${DONOOP}="true" ]; 
+        then
 			echo "noop"
 			sleep 60; 
 		else
