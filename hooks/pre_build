@@ -10,4 +10,8 @@ echo "DOCKERFILE_PATH:  ${DOCKERFILE_PATH}"
 echo "DOCKER_TAG:       ${DOCKER_TAG}"
 echo "IMAGE_NAME:       ${IMAGE_NAME}"
 
+export STEAMAPPID=600760
+curl -X GET "https://api.steamcmd.net/v1/info/${STEAMAPPID}" -o steaminfo.json
+cat steaminfo.json
+whereis jq
 
