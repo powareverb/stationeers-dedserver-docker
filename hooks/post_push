@@ -1,8 +1,53 @@
-#!/bin/sh
+#!/bin/bash
 echo "post_push - $DOCKERFILE_PATH"
 
-# Add the source commit as a tag
-# DOCKERFILE_PATH
-#  docker tag $IMAGE_NAME $DOCKER_REPO:$SOURCE_COMMIT
-#  docker push $DOCKER_REPO:$SOURCE_COMMIT
+# Debugging
+: <<'END_COMMENT'
+SOURCE_BRANCH=main
+SOURCE_COMMIT=fb3595eb9bdb4baabb75e03fd14099bce0a56468
+COMMIT_MSG=Test retrieving latest buildid
+DOCKER_REPO=index.docker.io/powareverb/stationeers-dedserver
+DOCKERFILE_PATH=Dockerfile.prebake
+DOCKER_TAG=prebake-branch-beta-latest
+IMAGE_NAME=index.docker.io/powareverb/stationeers-dedserver:prebake-branch-beta-latest
+END_COMMENT
 
+function export_envs() {
+  local envFile=${1:-.env}
+  local isComment='^[[:space:]]*#'
+  local isBlank='^[[:space:]]*$'
+  while IFS= read -r line; do
+    [[ $line =~ $isComment ]] && continue
+    [[ $line =~ $isBlank ]] && continue
+    key=$(echo "$line" | cut -d '=' -f 1)
+    value=$(echo "$line" | cut -d '=' -f 2-)
+    eval "export ${key}=\"$(echo \${value})\""
+  done < <( cat "$envFile" )
+}
+
+# If we're running prebake, add some further tags
+if [ $DOCKERFILE_PATH="Dockerfile.prebake" ]; then
+
+    # Grab the buildid, version data out of image
+    id=$(docker create $IMAGE_NAME)
+    docker cp $id:/home/steam/stationeers-server-prebake/steamapps/appmanifest_600760.acf appmanifest_600760.acf
+    docker cp $id:/home/steam/stationeers-server-prebake/rocketstation_DedicatedServer_Data/StreamingAssets/version.ini version.ini
+    docker rm -v $id
+
+    cat version.ini | grep UPDATE | tee version.trimmed.ini
+    export_envs version.trimmed.ini
+    echo "steam"; cat appmanifest_600760.acf | grep buildid
+    echo "game"; echo "$UPDATEVERSION"
+
+    # Compare to expected
+    echo "Expected Version"
+    echo "Public:   $VERSION_PUBLIC_BUILDID"
+    echo "Beta:     $VERSION_BETA_BUILDID"
+
+    # Push some tags
+    # docker tag $IMAGE_NAME $DOCKER_REPO:$SOURCE_COMMIT
+    # docker push $DOCKER_REPO:$SOURCE_COMMIT
+
+
+
+fi

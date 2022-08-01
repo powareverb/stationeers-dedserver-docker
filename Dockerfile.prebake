@@ -9,9 +9,15 @@
 
 # Building and Testing
 # docker build . -f Dockerfile.prebake -t powareverb/stationeers-dedserver:prebake-latest 
-# docker build . -f Dockerfile.prebake -t powareverb/stationeers-dedserver:prebake-latest --no-cache
+# With our expected build data
+# docker build --build-arg EXPECTED_VERSION_PUBLIC_BUILDID=${VERSION_PUBLIC_BUILDID} --build-arg EXPECTED_VERSION_BETA_BUILDID=${VERSION_BETA_BUILDID} . -f Dockerfile.prebake -t powareverb/stationeers-dedserver:prebake-latest
+# docker image ls | grep stationeers
+
+# Run
 # docker run --rm -it powareverb/stationeers-dedserver:prebake-latest /bin/bash
 # docker run --rm powareverb/stationeers-dedserver:prebake-latest
+# Beta
+# docker run --rm -it powareverb/stationeers-dedserver:prebake-branch-beta-latest /bin/bash
 # Permanent
 # docker run --rm -it --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated-host powareverb/stationeers-dedserver /bin/bash
 # docker run -d --net=host -v stationeers-data:/home/steam/stationeers-server-dedicated/ --name=stationeers-dedicated-host powareverb/stationeers-dedserver
@@ -50,6 +56,13 @@ VOLUME ${STEAMAPPDIR}
 WORKDIR ${HOMEDIR}
 
 # This will download the bits and bake them into the image
+ARG EXPECTED_VERSION_PUBLIC_BUILDID="unknown"
+ARG EXPECTED_VERSION_BETA_BUILDID="unknown"
+ARG EXPECTED_VERSION_BRANCH "beta"
+ENV VERSION_PUBLIC_BUILDID ${EXPECTED_VERSION_PUBLIC_BUILDID}
+ENV VERSION_BETA_BUILDID ${EXPECTED_VERSION_BETA_BUILDID}
+ENV VERSION_BRANCH ${EXPECTED_VERSION_BRANCH}
+
 RUN export PREBAKE=true && export STEAMAPPDIR=${PREBAKEDIR} && ./entry.sh  
 
 CMD ["bash", "entry.sh"]

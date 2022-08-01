@@ -1,5 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 echo "pre_build"
+
+# Debugging
+: <<'END_COMMENT'
+SOURCE_BRANCH=main
+SOURCE_COMMIT=fb3595eb9bdb4baabb75e03fd14099bce0a56468
+COMMIT_MSG=Test retrieving latest buildid
+DOCKER_REPO=index.docker.io/powareverb/stationeers-dedserver
+DOCKERFILE_PATH=Dockerfile.prebake
+DOCKER_TAG=prebake-branch-beta-latest
+IMAGE_NAME=index.docker.io/powareverb/stationeers-dedserver:prebake-branch-beta-latest
+END_COMMENT
 
 # DEBUG
 echo "SOURCE_BRANCH:    ${SOURCE_BRANCH}"
@@ -10,8 +21,31 @@ echo "DOCKERFILE_PATH:  ${DOCKERFILE_PATH}"
 echo "DOCKER_TAG:       ${DOCKER_TAG}"
 echo "IMAGE_NAME:       ${IMAGE_NAME}"
 
+# Which branch to use
+# TODO: Use a prefix for the branch in the tag, e.g.
+# prebake-branch-beta-latest
+# so we can programmatically use other branches
+if [[ "${DOCKER_TAG}" == *"public"* ]]; then
+    versionBranch=public
+else
+    versionBranch=beta
+fi
+echo "Using branch version: $versionBranch"
+
 export STEAMAPPID=600760
 curl -X GET "https://api.steamcmd.net/v1/info/${STEAMAPPID}" -o steaminfo.json
-cat steaminfo.json
-whereis jq
 
+linuxStatus=$(jq '.data | getpath(["600760"]).depots | getpath(["600762"])' ./steaminfo.json)
+buildBranches=$(jq '.data | getpath(["600760"]).depots.branches' ./steaminfo.json)
+
+publicBuild=$(echo $buildBranches | jq '.public.buildid' -r)
+betaBuild=$(echo $buildBranches | jq '.beta.buildid' -r)
+
+echo "Configured branch:   $versionBranch"
+echo "Expected versions"
+echo "Public:   $publicBuild"
+echo "Beta:     $betaBuild"
+
+export VERSION_BRANCH=$versionBranch
+export VERSION_PUBLIC_BUILDID=$publicBuild
+export VERSION_BETA_BUILDID=$betaBuild

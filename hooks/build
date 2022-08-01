@@ -1,0 +1,28 @@
+#!/bin/bash
+echo "build"
+
+# Debugging
+: <<'END_COMMENT'
+SOURCE_BRANCH=main
+SOURCE_COMMIT=fb3595eb9bdb4baabb75e03fd14099bce0a56468
+COMMIT_MSG=Test retrieving latest buildid
+DOCKER_REPO=index.docker.io/powareverb/stationeers-dedserver
+DOCKERFILE_PATH=Dockerfile.prebake
+DOCKER_TAG=prebake-branch-beta-latest
+IMAGE_NAME=index.docker.io/powareverb/stationeers-dedserver:prebake-branch-beta-latest
+END_COMMENT
+
+echo "Expected Version"
+echo "Public:   $VERSION_PUBLIC_BUILDID"
+echo "Beta:     $VERSION_BETA_BUILDID"
+
+if [ $DOCKERFILE_PATH="Dockerfile.prebake" ]; then
+    echo "Building prebaked image with expected buildids"
+    docker build --build-arg EXPECTED_VERSION_BRANCH=${VERSION_BRANCH} \
+        --build-arg EXPECTED_VERSION_PUBLIC_BUILDID=${VERSION_PUBLIC_BUILDID} \
+        --build-arg EXPECTED_VERSION_BETA_BUILDID=${VERSION_BETA_BUILDID} \
+        . -f $DOCKERFILE_PATH -t $IMAGE_NAME
+else
+    echo "Building standard image without args"
+    docker build -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+fi
