@@ -33,6 +33,7 @@ services:
       PLANETOID: "mars"
       SAVENAME: "mars101"
       TMUXDIRECT: "true"
+      VERSION_BRANCH: "beta"
       # For testing
       # DONOOP: "true"
     volumes:

@@ -12,12 +12,16 @@ In particular - the server currently requires 16GM RAM
 
 ## Status
 
-NOTE: This is a work in progress, currently running but haven't confirmed getting networking / clients connected
+I'm regularly running this myself with good success (using the non-prebaked docker-compose variant).
+Note however, that the dedicated server itself is still very much a work in progress, it's worth popping on the Discord to see if there's any issues with the current state.
+
+Successfully running and receiving clients, currently testing on version:
+
+```txt
 As of:
-"LastUpdated"           "1655527706"
 "buildid"               "8961321"
 Update 0.2.3346.16562
-this seems to be running correctly, however having issues with timeouts connecting to the client.
+```
 
 ## What is Stationeers?
 A brutal exploration and survival game in space, set on a procedurally-generated planet or moon of your choice.  Don't forget your duct tape.
